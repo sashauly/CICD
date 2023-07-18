@@ -1,0 +1,46 @@
+stages:
+  - build
+  - style
+  - test
+  - deploy
+
+build:
+  stage: build
+  tags:
+    - simple-bash-cicd
+  script: bash ./src/build.sh
+  after_script:
+    - bash src/notify.sh
+  artifacts:
+    name: "$CI_JOB_NAME"
+    paths:
+      - ./src/cat/s21_cat
+      - ./src/grep/s21_grep
+    expire_in: "30 days"
+
+style:
+  stage: style
+  when: on_success
+  tags:
+    - simple-bash-cicd
+  script: bash ./src/style.sh
+  after_script:
+    - bash src/notify.sh
+
+test:
+  stage: test
+  when: on_success
+  tags:
+    - simple-bash-cicd
+  script: bash ./src/test.sh
+  after_script:
+    - bash src/notify.sh
+
+deploy:
+  stage: deploy
+  when: manual
+  tags:
+    - simple-bash-cicd
+  script: bash ./src/deploy.sh
+  after_script:
+    - bash src/notify.sh
